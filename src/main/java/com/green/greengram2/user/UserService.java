@@ -37,6 +37,26 @@ public class UserService {
         return new ResVo(pDto.getIuser());
     }
 
+    public UserSigninVo login(UserSigninDto dto) {
+        UserSigninProcVo procVo = mapper.userSignin(dto.getUid());
+        UserSigninVo vo = new UserSigninVo();
+
+        if (procVo == null) {
+            vo.setResult(2);
+            return vo;
+        } else if (!BCrypt.checkpw(dto.getUpw(), procVo.getUpw())){
+
+            vo.setResult(3);
+            return vo;
+        }else {
+            vo.setResult(1);
+            vo.setIuser(procVo.getIuser());
+            vo.setNm(procVo.getNm());
+            vo.setPic(procVo.getPic());
+            return vo;
+        }
+    }
+
 
     //현수가 한거는 UserSigninVo에 전역변수에 upw 주석해제, 유저인터페이스에서 리턴타입이름 변경
 /*    public UserSigninVo userSignin(UserSigninDto dto) {
@@ -61,20 +81,6 @@ public class UserService {
 
     /* 박스갈이 이때 UserSigninVo에 있는 Upw 변수 삭제하고
     UserMapper인터페이스에 있는 UserSigninVo타입을 UserSigninProcVo로 변경 */
-    public UserSigninVo userSignin(UserSigninDto dto){
-        UserSigninProcVo procVo = mapper.userSignin(dto.getUid());
-        UserSigninVo vo = new UserSigninVo();
-        if (procVo == null) {
-            vo.setResult(2);
-            return vo;
-        } else if (!BCrypt.checkpw(dto.getUpw(),procVo.getUpw())){
-            vo.setResult(3);
-            return vo;
-        }
-        vo.setResult(1);
-        vo.setIuser(procVo.getIuser());
-        vo.setNm(procVo.getNm());
-        vo.setPic(procVo.getPic());
-        return vo;
-    }
+
+
 }
